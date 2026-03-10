@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <report-views version="2.0" >
  <header>
-  <DateModified>2020-11-05T17:35:13</DateModified>
+  <DateModified>2026-03-10T17:59:18</DateModified>
   <ModuleName>toplevel</ModuleName>
-  <SummaryTimeStamp>2020-11-04T15:08:19</SummaryTimeStamp>
-  <SavedFilePath>C:/Xilinx/Practicas_4AHC/Practica2_Picoblaze/P2c_Picoblaze_Helloworld_RAM_INT_FLIP/P2c_Proyecto_Helloworld_RAM_INT_FLIP/iseconfig/toplevel.xreport</SavedFilePath>
-  <ImplementationReportsDirectory>C:/Xilinx/Practicas_4AHC/Practica2_Picoblaze/P2c_Picoblaze_Helloworld_RAM_INT_FLIP/P2c_Proyecto_Helloworld_RAM_INT_FLIP\</ImplementationReportsDirectory>
+  <SummaryTimeStamp>2026-03-05T18:02:25</SummaryTimeStamp>
+  <SavedFilePath>/home/ise/AHC/P2c_Picoblaze_Helloworld_RAM_INT_FLIP/P2c_Proyecto_Helloworld_RAM_INT_FLIP/iseconfig/toplevel.xreport</SavedFilePath>
+  <ImplementationReportsDirectory>/home/ise/AHC/P2c_Picoblaze_Helloworld_RAM_INT_FLIP/P2c_Proyecto_Helloworld_RAM_INT_FLIP/</ImplementationReportsDirectory>
   <DateInitialized>2020-10-28T11:44:19</DateInitialized>
   <EnableMessageFiltering>false</EnableMessageFiltering>
  </header>

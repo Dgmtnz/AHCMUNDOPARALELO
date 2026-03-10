@@ -33,12 +33,28 @@ architecture behavioral of toplevel is
     end component;
 
 -----------------------------------------------------------------
--- declaración de la ROM de programa
+-- declaraciÃ³n de la ROM de programa
 -----------------------------------------------------------------
   component programa_helloworld_int_FLIP
     Port (      address : in std_logic_vector(7 downto 0);
             		   dout : out std_logic_vector(15 downto 0);
                     clk : in std_logic);
+    end component;
+
+-----------------------------------------------------------------
+-- declaraciÃ³n del perifÃ©rico CRC
+-----------------------------------------------------------------
+  component crc_peripheral
+    Port (
+        clk          : in std_logic;
+        reset        : in std_logic;
+        write_strobe : in std_logic;
+        read_strobe  : in std_logic;
+        port_id      : in std_logic_vector(7 downto 0);
+        data_in      : in std_logic_vector(7 downto 0);
+        data_out     : out std_logic_vector(7 downto 0);
+        crc_port_sel : out std_logic
+    );
     end component;
 
 -----------------------------------------------------------------
@@ -70,6 +86,10 @@ x"2A", x"0A", x"0D", x"00", x"00", x"00", x"00", x"00" );
 
 signal rxbuff_out,RAM_out: std_logic_vector(7 downto 0);
 
+-- CRC peripheral signals
+signal crc_out: std_logic_vector(7 downto 0);
+signal crc_port_sel: std_logic;
+
 begin
 
 	LED <= reset; 	-- para comprobar la programacion encendemos
@@ -99,7 +119,20 @@ begin
                	     dout => instruction,
                       clk => clk);
 
-	--registra el bit tx del puerto de salida, por si éste cambia
+  -- CRC peripheral instance
+  crc_inst: crc_peripheral
+    port map(
+        clk          => clk,
+        reset        => reset,
+        write_strobe => writestrobe,
+        read_strobe  => readstrobe,
+        port_id      => portid,
+        data_in      => outport,
+        data_out     => crc_out,
+        crc_port_sel => crc_port_sel
+    );
+
+	--registra el bit tx del puerto de salida, por si este cambia
 	txbuff:process(reset, clk)
 	begin
 		if (reset='1') then
@@ -111,7 +144,7 @@ begin
 		end if;
 	end process;
 	
-	--añade 7ceros a rx para meterlos al puerto de entrada cuando se lea
+	--aï¿½ade 7ceros a rx para meterlos al puerto de entrada cuando se lea
 	rxbuff:process(reset, clk)
 	begin
 		if (reset='1') then
@@ -127,15 +160,26 @@ begin
 	process (clk)
 	begin
 		if (clk'event and clk = '1') then
-			if (writestrobe = '1' and portid<x"40") then
+			if (writestrobe = '1' and portid<x"40" and not Is_X(portid)) then
 				RAM(to_integer(unsigned(portid))) <= outport;
 			end if;
 		end if;
 	end process;
-	RAM_out <= RAM(to_integer(unsigned(portid)));
+	
+	-- Lectura asincrona de RAM con proteccion contra metavalores
+	process(portid, RAM)
+	begin
+		if Is_X(portid(5 downto 0)) then
+			RAM_out <= (others => '0');
+		else
+			RAM_out <= RAM(to_integer(unsigned(portid(5 downto 0))));
+		end if;
+	end process;
 	
 -- Multiplexor inport
+-- RAM at 0x00-0x3F, CRC at 0x40, RS232 at 0xFF
 inport <= RAM_out when (readstrobe = '1' and portid<x"40") else
+			 crc_out when (readstrobe = '1' and portid=x"40") else
 			 rxbuff_out when (readstrobe = '1' and portid=x"FF") else
 			 x"00";
 

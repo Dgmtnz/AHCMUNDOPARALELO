@@ -19,6 +19,7 @@ entity register_and_flag_enable is
 	 		 i_arithmetic: in std_logic;
 			 i_shift_rotate: in std_logic;
 			 i_flip: in std_logic;				 -- added new instruction
+			 i_cesar: in std_logic;				 -- CESAR cipher instruction
 			 i_returni: in std_logic;
 			 i_input: in std_logic;
           active_interrupt : in std_logic;
@@ -45,7 +46,8 @@ begin
   --
   -- added new instruction, uncomment this instruction and comment next instruction
   -- to enable the new instruction
-   reg_instruction_decode <= (i_logical or i_arithmetic or i_shift_rotate or i_input or i_flip) 
+  -- Added i_cesar for CESAR cipher instruction support
+   reg_instruction_decode <= (i_logical or i_arithmetic or i_shift_rotate or i_input or i_flip or i_cesar) 
   								and (not active_interrupt);
 
   --reg_instruction_decode <= (i_logical or i_arithmetic or i_shift_rotate or i_input) 
