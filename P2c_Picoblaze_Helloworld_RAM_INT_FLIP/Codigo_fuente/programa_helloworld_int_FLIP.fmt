@@ -144,117 +144,149 @@
 144  69              :LOAD       TXREG        29           
 145  6A              :CALL       TRANSMITE    
 146  6B              :CALL       TX_CRLF      
-147  6C              ; CRC del original
-148  6C              :LOAD       S0           00           
-149  6D              :OUTPUT     S0           CRC_RESET    
-150  6E              :OUTPUT     ORIGINAL     CRC_DATA     
-151  6F              :INPUT      CRC1         CRC_DATA     
-152  70              ; "C1:" + hex
-153  70              :LOAD       TXREG        43           
-154  71              :CALL       TRANSMITE    
-155  72              :LOAD       TXREG        31           
-156  73              :CALL       TRANSMITE    
-157  74              :LOAD       TXREG        3A           
-158  75              :CALL       TRANSMITE    
-159  76              :LOAD       S0           CRC1         
-160  77              :CALL       TX_HEX       
-161  78              :CALL       TX_CRLF      
-162  79              ; CESAR +3
-163  79              :LOAD       RXREG        ORIGINAL     
-164  7A              :CESAR      RXREG        03           
-165  7B              ; "+3:" + char + " (" + hex + ")"
-166  7B              :LOAD       TXREG        2B           
-167  7C              :CALL       TRANSMITE    
-168  7D              :LOAD       TXREG        33           
-169  7E              :CALL       TRANSMITE    
-170  7F              :LOAD       TXREG        3A           
-171  80              :CALL       TRANSMITE    
-172  81              :LOAD       TXREG        RXREG        
-173  82              :CALL       TRANSMITE    
-174  83              :LOAD       TXREG        20           
-175  84              :CALL       TRANSMITE    
-176  85              :LOAD       TXREG        28           
-177  86              :CALL       TRANSMITE    
-178  87              :LOAD       S0           RXREG        
-179  88              :CALL       TX_HEX       
-180  89              :LOAD       TXREG        29           
-181  8A              :CALL       TRANSMITE    
-182  8B              :CALL       TX_CRLF      
-183  8C              ; CRC del cifrado
-184  8C              :LOAD       S0           00           
-185  8D              :OUTPUT     S0           CRC_RESET    
-186  8E              :OUTPUT     RXREG        CRC_DATA     
-187  8F              ; "CE:" + hex
-188  8F              :LOAD       TXREG        43           
-189  90              :CALL       TRANSMITE    
-190  91              :LOAD       TXREG        45           
-191  92              :CALL       TRANSMITE    
-192  93              :LOAD       TXREG        3A           
-193  94              :CALL       TRANSMITE    
-194  95              :INPUT      S0           CRC_DATA     
-195  96              :CALL       TX_HEX       
-196  97              :CALL       TX_CRLF      
-197  98              ; CESARINV -3
-198  98              :CESARINV   RXREG        03           
-199  99              ; "-3:" + char + " (" + hex + ")"
-200  99              :LOAD       TXREG        2D           
+147  6C              ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+148  6C              ; Validar: solo letras (A-Z, a-z) y digitos (0-9)
+149  6C              ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+150  6C              :LOAD       S0           ORIGINAL     
+151  6D              :SUB        S0           30           
+152  6E              :JUMP       C            NO_ALFA      
+153  6F              :LOAD       S0           ORIGINAL     
+154  70              :SUB        S0           3A           
+155  71              :JUMP       C            SI_ALFA      
+156  72              :LOAD       S0           ORIGINAL     
+157  73              :SUB        S0           41           
+158  74              :JUMP       C            NO_ALFA      
+159  75              :LOAD       S0           ORIGINAL     
+160  76              :SUB        S0           5B           
+161  77              :JUMP       C            SI_ALFA      
+162  78              :LOAD       S0           ORIGINAL     
+163  79              :SUB        S0           61           
+164  7A              :JUMP       C            NO_ALFA      
+165  7B              :LOAD       S0           ORIGINAL     
+166  7C              :SUB        S0           7B           
+167  7D              :JUMP       C            SI_ALFA      
+168  7E NO_ALFA      :LOAD       TXREG        45           
+169  7F              :CALL       TRANSMITE    
+170  80              :LOAD       TXREG        52           
+171  81              :CALL       TRANSMITE    
+172  82              :LOAD       TXREG        52           
+173  83              :CALL       TRANSMITE    
+174  84              :LOAD       TXREG        21           
+175  85              :CALL       TRANSMITE    
+176  86              :CALL       TX_CRLF      
+177  87              :JUMP       FIN          
+178  88 SI_ALFA      
+179  88              ; CRC del original
+180  88              :LOAD       S0           00           
+181  89              :OUTPUT     S0           CRC_RESET    
+182  8A              :OUTPUT     ORIGINAL     CRC_DATA     
+183  8B              :INPUT      CRC1         CRC_DATA     
+184  8C              ; "C1:" + hex
+185  8C              :LOAD       TXREG        43           
+186  8D              :CALL       TRANSMITE    
+187  8E              :LOAD       TXREG        31           
+188  8F              :CALL       TRANSMITE    
+189  90              :LOAD       TXREG        3A           
+190  91              :CALL       TRANSMITE    
+191  92              :LOAD       S0           CRC1         
+192  93              :CALL       TX_HEX       
+193  94              :CALL       TX_CRLF      
+194  95              ; CESAR +3
+195  95              :LOAD       RXREG        ORIGINAL     
+196  96              :CESAR      RXREG        03           
+197  97              ; "+3:" + char + " (" + hex + ")"
+198  97              :LOAD       TXREG        2B           
+199  98              :CALL       TRANSMITE    
+200  99              :LOAD       TXREG        33           
 201  9A              :CALL       TRANSMITE    
-202  9B              :LOAD       TXREG        33           
+202  9B              :LOAD       TXREG        3A           
 203  9C              :CALL       TRANSMITE    
-204  9D              :LOAD       TXREG        3A           
+204  9D              :LOAD       TXREG        RXREG        
 205  9E              :CALL       TRANSMITE    
-206  9F              :LOAD       TXREG        RXREG        
+206  9F              :LOAD       TXREG        20           
 207  A0              :CALL       TRANSMITE    
-208  A1              :LOAD       TXREG        20           
+208  A1              :LOAD       TXREG        28           
 209  A2              :CALL       TRANSMITE    
-210  A3              :LOAD       TXREG        28           
-211  A4              :CALL       TRANSMITE    
-212  A5              :LOAD       S0           RXREG        
-213  A6              :CALL       TX_HEX       
-214  A7              :LOAD       TXREG        29           
-215  A8              :CALL       TRANSMITE    
-216  A9              :CALL       TX_CRLF      
-217  AA              ; CRC del descifrado
-218  AA              :LOAD       S0           00           
-219  AB              :OUTPUT     S0           CRC_RESET    
-220  AC              :OUTPUT     RXREG        CRC_DATA     
-221  AD              ; "C2:" + hex
-222  AD              :LOAD       TXREG        43           
+210  A3              :LOAD       S0           RXREG        
+211  A4              :CALL       TX_HEX       
+212  A5              :LOAD       TXREG        29           
+213  A6              :CALL       TRANSMITE    
+214  A7              :CALL       TX_CRLF      
+215  A8              ; CRC del cifrado
+216  A8              :LOAD       S0           00           
+217  A9              :OUTPUT     S0           CRC_RESET    
+218  AA              :OUTPUT     RXREG        CRC_DATA     
+219  AB              ; "CE:" + hex
+220  AB              :LOAD       TXREG        43           
+221  AC              :CALL       TRANSMITE    
+222  AD              :LOAD       TXREG        45           
 223  AE              :CALL       TRANSMITE    
-224  AF              :LOAD       TXREG        32           
+224  AF              :LOAD       TXREG        3A           
 225  B0              :CALL       TRANSMITE    
-226  B1              :LOAD       TXREG        3A           
-227  B2              :CALL       TRANSMITE    
-228  B3              :INPUT      S0           CRC_DATA     
-229  B4              :LOAD       ORIGINAL     S0           
-230  B5              :CALL       TX_HEX       
-231  B6              :CALL       TX_CRLF      
-232  B7              ; Verificar CRC1 vs CRC2
-233  B7              :LOAD       S0           ORIGINAL     
-234  B8              :SUB        S0           CRC1         
-235  B9              :JUMP       NZ           FAIL         
-236  BA              :LOAD       TXREG        4F           
-237  BB              :CALL       TRANSMITE    
-238  BC              :LOAD       TXREG        4B           
-239  BD              :CALL       TRANSMITE    
-240  BE              :LOAD       TXREG        21           
-241  BF              :CALL       TRANSMITE    
-242  C0              :JUMP       FIN          
-243  C1 FAIL         :LOAD       TXREG        45           
-244  C2              :CALL       TRANSMITE    
-245  C3              :LOAD       TXREG        52           
-246  C4              :CALL       TRANSMITE    
-247  C5              :LOAD       TXREG        52           
-248  C6              :CALL       TRANSMITE    
-249  C7 FIN          :CALL       TX_CRLF      
-250  C8              :LOAD       TXREG        2D           
-251  C9              :CALL       TRANSMITE    
-252  CA              :LOAD       TXREG        2D           
-253  CB              :CALL       TRANSMITE    
-254  CC              :LOAD       TXREG        2D           
-255  CD              :CALL       TRANSMITE    
-256  CE              :CALL       TX_CRLF      
-257  CF              :RETURNI    ENABLE       
-258  FF              :ADDRESS    FF           
-259  FF              :JUMP       INTERRUP     
-260 100              
+226  B1              :INPUT      S0           CRC_DATA     
+227  B2              :CALL       TX_HEX       
+228  B3              :CALL       TX_CRLF      
+229  B4              ; CESARINV -3
+230  B4              :CESARINV   RXREG        03           
+231  B5              ; "-3:" + char + " (" + hex + ")"
+232  B5              :LOAD       TXREG        2D           
+233  B6              :CALL       TRANSMITE    
+234  B7              :LOAD       TXREG        33           
+235  B8              :CALL       TRANSMITE    
+236  B9              :LOAD       TXREG        3A           
+237  BA              :CALL       TRANSMITE    
+238  BB              :LOAD       TXREG        RXREG        
+239  BC              :CALL       TRANSMITE    
+240  BD              :LOAD       TXREG        20           
+241  BE              :CALL       TRANSMITE    
+242  BF              :LOAD       TXREG        28           
+243  C0              :CALL       TRANSMITE    
+244  C1              :LOAD       S0           RXREG        
+245  C2              :CALL       TX_HEX       
+246  C3              :LOAD       TXREG        29           
+247  C4              :CALL       TRANSMITE    
+248  C5              :CALL       TX_CRLF      
+249  C6              ; CRC del descifrado
+250  C6              :LOAD       S0           00           
+251  C7              :OUTPUT     S0           CRC_RESET    
+252  C8              :OUTPUT     RXREG        CRC_DATA     
+253  C9              ; "C2:" + hex
+254  C9              :LOAD       TXREG        43           
+255  CA              :CALL       TRANSMITE    
+256  CB              :LOAD       TXREG        32           
+257  CC              :CALL       TRANSMITE    
+258  CD              :LOAD       TXREG        3A           
+259  CE              :CALL       TRANSMITE    
+260  CF              :INPUT      S0           CRC_DATA     
+261  D0              :LOAD       ORIGINAL     S0           
+262  D1              :CALL       TX_HEX       
+263  D2              :CALL       TX_CRLF      
+264  D3              ; Verificar CRC1 vs CRC2
+265  D3              :LOAD       S0           ORIGINAL     
+266  D4              :SUB        S0           CRC1         
+267  D5              :JUMP       NZ           FAIL         
+268  D6              :LOAD       TXREG        4F           
+269  D7              :CALL       TRANSMITE    
+270  D8              :LOAD       TXREG        4B           
+271  D9              :CALL       TRANSMITE    
+272  DA              :LOAD       TXREG        21           
+273  DB              :CALL       TRANSMITE    
+274  DC              :JUMP       FIN          
+275  DD FAIL         :LOAD       TXREG        45           
+276  DE              :CALL       TRANSMITE    
+277  DF              :LOAD       TXREG        52           
+278  E0              :CALL       TRANSMITE    
+279  E1              :LOAD       TXREG        52           
+280  E2              :CALL       TRANSMITE    
+281  E3 FIN          :CALL       TX_CRLF      
+282  E4              :LOAD       TXREG        2D           
+283  E5              :CALL       TRANSMITE    
+284  E6              :LOAD       TXREG        2D           
+285  E7              :CALL       TRANSMITE    
+286  E8              :LOAD       TXREG        2D           
+287  E9              :CALL       TRANSMITE    
+288  EA              :CALL       TX_CRLF      
+289  EB              :RETURNI    ENABLE       
+290  FF              :ADDRESS    FF           
+291  FF              :JUMP       INTERRUP     
+292 100              

@@ -144,6 +144,38 @@ interrup:	DISABLE 	INTERRUPT
 		LOAD		txreg, 29
 		CALL		transmite
 		CALL		tx_crlf
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		; Validar: solo letras (A-Z, a-z) y digitos (0-9)
+		;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+		LOAD		s0, original
+		SUB		s0, 30
+		JUMP		C, no_alfa
+		LOAD		s0, original
+		SUB		s0, 3A
+		JUMP		C, si_alfa
+		LOAD		s0, original
+		SUB		s0, 41
+		JUMP		C, no_alfa
+		LOAD		s0, original
+		SUB		s0, 5B
+		JUMP		C, si_alfa
+		LOAD		s0, original
+		SUB		s0, 61
+		JUMP		C, no_alfa
+		LOAD		s0, original
+		SUB		s0, 7B
+		JUMP		C, si_alfa
+no_alfa:	LOAD		txreg, 45
+		CALL		transmite
+		LOAD		txreg, 52
+		CALL		transmite
+		LOAD		txreg, 52
+		CALL		transmite
+		LOAD		txreg, 21
+		CALL		transmite
+		CALL		tx_crlf
+		JUMP		fin
+si_alfa:
 		; CRC del original
 		LOAD		s0, 00
 		OUTPUT		s0, crc_reset
